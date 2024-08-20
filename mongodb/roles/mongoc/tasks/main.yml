@@ -1,26 +1,23 @@
 ---
 # This playbook  deploys the mongodb configurationdb  servers
-
 - name: Create data directory for mongoc configuration server
-  file: path={{ mongodb_datadir_prefix }}/configdb state=directory owner=mongod group=mongod
+  ansible.builtin.file:
 
 - name: Create the mongo configuration server startup file
-  template: src=mongoc.j2 dest=/etc/init.d/mongoc mode=0655
-
+  ansible.builtin.template:
 
 - name: Create the mongo configuration server file
-  template: src=mongoc.conf.j2 dest=/etc/mongoc.conf
-
+  ansible.builtin.template:
 
 - name: Copy the keyfile for authentication
-  copy: src=roles/mongod/files/secret dest={{ mongodb_datadir_prefix }}/secret owner=mongod group=mongod mode=0400
+  ansible.builtin.copy:
 
 - name: Start the mongo configuration server service
-  command: creates=/var/lock/subsys/mongoc /etc/init.d/mongoc start
+  ansible.builtin.command:
 
 - name: pause
-  pause: seconds=20
+  ansible.builtin.pause:
 
 - name: add the admin user
-  mongodb_user: database=admin name=admin password={{ mongo_admin_pass }} login_port={{ mongoc_port }} state=present
-  ignore_errors: yes
+  ignore_errors: true
+  community.mongodb.mongodb_user:
