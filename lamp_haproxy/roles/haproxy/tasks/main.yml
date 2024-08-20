@@ -1,12 +1,11 @@
 ---
 # This role installs HAProxy and configures it.
-
 - name: Download and install haproxy
-  yum: name=haproxy state=present
+  ansible.builtin.yum:
 
 - name: Configure the haproxy cnf file with hosts
-  template: src=haproxy.cfg.j2 dest=/etc/haproxy/haproxy.cfg
   notify: restart haproxy
+  ansible.builtin.template:
 
 - name: Start the haproxy service
-  service: name=haproxy state=started enabled=yes
+  ansible.builtin.service:

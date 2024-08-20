@@ -1,29 +1,22 @@
-##
-# Example Ansible playbook that uses the PostgreSQL module.
-#
-# This installs PostgreSQL on an Ubuntu system, creates a database called
-# "myapp" and a user called "django" with password "mysupersecretpassword"
-# with access to the "myapp" database.
-#
 ---
 - hosts: webservers
-  become: yes
-  gather_facts: no
+  become: true
+  gather_facts: false
 
   tasks:
-  - name: ensure apt cache is up to date
-    apt: update_cache=yes
-  - name: ensure packages are installed
-    apt: name={{item}}
-    with_items:
-        - postgresql
-        - libpq-dev
-        - python-psycopg2
+    - name: ensure apt cache is up to date
+
+    - name: ensure packages are installed
+      ansible.builtin.apt:
+        name:
+          - postgresql
+          - libpq-dev
+          - python-psycopg2
 
 - hosts: webservers
-  become: yes
+  become: true
   become_user: postgres
-  gather_facts: no
+  gather_facts: false
 
   vars:
     dbname: myapp
@@ -31,15 +24,14 @@
     dbpassword: mysupersecretpassword
 
   tasks:
-  - name: ensure database is created
-    postgresql_db: name={{dbname}}
+    - name: ensure database is created
+      community.postgresql.postgresql_db:
 
-  - name: ensure user has access to database
-    postgresql_user: db={{dbname}} name={{dbuser}} password={{dbpassword}} priv=ALL
+    - name: ensure user has access to database
+      community.postgresql.postgresql_user:
 
-  - name: ensure user does not have unnecessary privilege
-    postgresql_user: name={{dbuser}} role_attr_flags=NOSUPERUSER,NOCREATEDB
-  
-  - name: ensure no other user can access the database
-    postgresql_privs: db={{dbname}} role=PUBLIC type=database priv=ALL state=absent
+    - name: ensure user does not have unnecessary privilege
+      community.postgresql.postgresql_user:
 
+    - name: ensure no other user can access the database
+      community.postgresql.postgresql_privs:
