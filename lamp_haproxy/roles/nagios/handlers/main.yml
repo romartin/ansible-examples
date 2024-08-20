@@ -1,7 +1,8 @@
 ---
 # handlers for nagios
+
 - name: restart httpd
-  service: name=httpd state=restarted
+  ansible.builtin.service:
 
 - name: restart nagios
-  service: name=nagios state=restarted
+  ansible.builtin.service:

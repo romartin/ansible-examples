@@ -1,26 +1,25 @@
 ---
 # This role will install MySQL and create db user and give permissions.
-
 - name: Install Mysql package
-  yum: name={{ item }} state=present
-  with_items:
-   - mysql-server
-   - MySQL-python
+  ansible.builtin.yum:
+    name:
+      - mysql-server
+      - MySQL-python
 
 - name: Configure SELinux to start mysql on any port
-  seboolean: name=mysql_connect_any state=true persistent=yes
   when: sestatus.rc != 0
+  ansible.posix.seboolean:
 
 - name: Create Mysql configuration file
-  template: src=my.cnf.j2 dest=/etc/my.cnf
   notify:
-  - restart mysql
+    - restart mysql
+  ansible.builtin.template:
 
 - name: Start Mysql Service
-  service: name=mysqld state=started enabled=yes
+  ansible.builtin.service:
 
 - name: Create Application Database
-  mysql_db: name={{ dbname }} state=present
+  community.mysql.mysql_db:
 
 - name: Create Application DB User
-  mysql_user: name={{ dbuser }} password={{ upassword }} priv=*.*:ALL host='%' state=present
+  community.mysql.mysql_user:
