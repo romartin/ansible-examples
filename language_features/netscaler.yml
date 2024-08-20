@@ -19,7 +19,7 @@
       netscaler: nsc_host={{nsc_host}} user={{nsc_user}} password={{nsc_pass}} name={{name}} type={{type}} action=disable
 
     - name: deploy new code
-      shell: yum upgrade -y
+      ansible.builtin.shell: yum upgrade -y
 
     - name: enable in the lb
       netscaler: nsc_host={{nsc_host}} user={{nsc_user}} password={{nsc_pass}} name={{name}} type={{type}} action=enable
